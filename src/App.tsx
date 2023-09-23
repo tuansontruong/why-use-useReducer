@@ -1,35 +1,49 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react'
 import './App.css'
+import LoginUseState from './LoginUseState';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const CurrentRoute = useSimpleHashRouter({
+    useState: LoginUseState,
+    // useReducer: LoginUseReducer,
+  });
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + ReactTS</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      {!CurrentRoute && (
+        <div className='App App-Column'>
+          <a href='#useState'>useState</a>
+          <br />
+          <br />
+          <a href='#useReducerTypeScript'>LoginUseReducerTypeScript</a>
+        </div>
+      )}
+      {CurrentRoute && <CurrentRoute />}
     </>
   )
 }
 
 export default App
+
+
+function useLocationHash() {
+  const [hash, setHash] = useState(window.location.hash);
+  function onHashChange() {
+    setHash(window.location.hash);
+  }
+  useEffect(() => {
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+  return hash;
+}
+
+function useSimpleHashRouter(routes: { [x: string]: any; useState?: any; useReducer?: any; }) {
+  const hash = useLocationHash();
+  // Exclude '#' when calculating hash.
+  const currentRoute = routes[hash.substr(1)];
+  if (currentRoute) {
+    return currentRoute;
+  }
+  return null;
+}
