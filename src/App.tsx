@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import LoginUseState from './LoginUseState';
+import LoginUseReducer from './LoginUseReducer';
 
 function App() {
   const CurrentRoute = useSimpleHashRouter({
     useState: LoginUseState,
-    // useReducer: LoginUseReducer,
+    useReducer: LoginUseReducer,
   });
 
   return (
@@ -15,7 +16,7 @@ function App() {
           <a href='#useState'>useState</a>
           <br />
           <br />
-          <a href='#useReducerTypeScript'>LoginUseReducerTypeScript</a>
+          <a href='#useReducer'>useReducer</a>
         </div>
       )}
       {CurrentRoute && <CurrentRoute />}
