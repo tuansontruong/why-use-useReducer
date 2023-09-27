@@ -1,61 +1,47 @@
-import React, { useReducer } from 'react';
-import { login } from './utils';
+import React, { useReducer } from "react";
+import { login } from "./utils";
 
-const initialState: LoginState = {
-  username: '',
-  password: '',
+const defaultStates = {
+  username: "",
+  password: "",
   isLoading: false,
-  error: '',
+  error: "",
   isLoggedIn: false,
-  variant: 'login',
 };
 
-interface LoginState {
-  username: string;
-  password: string;
-  isLoading: boolean;
-  error: string;
-  isLoggedIn: boolean;
-  variant: 'login' | 'forgetPassword';
-}
-
-type LoginAction =
-  | { type: 'login' | 'success' | 'error' | 'logOut' }
-  | { type: 'field'; fieldName: string; payload: string };
-
-function loginReducer(state: LoginState, action: LoginAction) {
+function statesManagement(state, action) {
   switch (action.type) {
-    case 'field': {
+    case "updateField": {
       return {
         ...state,
         [action.fieldName]: action.payload,
       };
     }
-    case 'login': {
+    case "startlogin": {
       return {
         ...state,
-        error: '',
+        error: "",
         isLoading: true,
       };
     }
-    case 'success': {
+    case "loginSuccess": {
       return {
         ...state,
         isLoggedIn: true,
         isLoading: false,
       };
     }
-    case 'error': {
+    case "showError": {
       return {
         ...state,
-        error: 'Incorrect username or password!',
+        error: "Incorrect username or password!",
         isLoggedIn: false,
         isLoading: false,
-        username: '',
-        password: '',
+        username: "",
+        password: "",
       };
     }
-    case 'logOut': {
+    case "logOut": {
       return {
         ...state,
         isLoggedIn: false,
@@ -67,63 +53,63 @@ function loginReducer(state: LoginState, action: LoginAction) {
 }
 
 export default function LoginUseReducer() {
-  const [state, dispatch] = useReducer(loginReducer, initialState);
+  const [state, dispatch] = useReducer(statesManagement, defaultStates);
   const { username, password, isLoading, error, isLoggedIn } = state;
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    dispatch({ type: 'login' });
+    dispatch({ type: "startlogin" });
 
     try {
       await login({ username, password });
-      dispatch({ type: 'success' });
+      dispatch({ type: "loginSuccess" });
     } catch (error) {
-      dispatch({ type: 'error' });
+      dispatch({ type: "showError" });
     }
   };
 
   return (
-    <div className='App'>
-      <div className='login-container'>
+    <div className="App">
+      <div className="login-container">
         {isLoggedIn ? (
           <>
             <h1>Welcome {username}!</h1>
-            <button onClick={() => dispatch({ type: 'logOut' })}>
+            <button onClick={() => dispatch({ type: "logOut" })}>
               Log Out
             </button>
           </>
         ) : (
-          <form className='form' onSubmit={onSubmit}>
-            {error && <p className='error'>{error}</p>}
+          <form className="form" onSubmit={onSubmit}>
+            {error && <p className="error">{error}</p>}
             <p>Please Login!</p>
             <input
-              type='text'
-              placeholder='username'
+              type="text"
+              placeholder="username"
               value={username}
               onChange={(e) =>
                 dispatch({
-                  type: 'field',
-                  fieldName: 'username',
+                  type: "updateField",
+                  fieldName: "username",
                   payload: e.currentTarget.value,
                 })
               }
             />
             <input
-              type='password'
-              placeholder='password'
-              autoComplete='new-password'
+              type="password"
+              placeholder="password"
+              autoComplete="new-password"
               value={password}
               onChange={(e) =>
                 dispatch({
-                  type: 'field',
-                  fieldName: 'password',
+                  type: "updateField",
+                  fieldName: "password",
                   payload: e.currentTarget.value,
                 })
               }
             />
-            <button className='submit' type='submit' disabled={isLoading}>
-              {isLoading ? 'Logging in...' : 'Log In'}
+            <button className="submit" type="submit" disabled={isLoading}>
+              {isLoading ? "Logging in..." : "Log In"}
             </button>
           </form>
         )}
