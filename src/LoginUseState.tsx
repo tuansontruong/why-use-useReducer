@@ -31,7 +31,7 @@ export default function LoginUseState() {
         {isLoggedIn ? (
           <>
             <h1>Welcome {username}!</h1>
-            <button onClick={() => setIsLoggedIn(false)}>Log Out</button>
+            <button onClick={() => setIsLoggedIn(false)}>Log   Out</button>
           </>
         ) : (
           <form className='form' onSubmit={onSubmit}>
